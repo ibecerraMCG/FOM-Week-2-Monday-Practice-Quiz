@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2 Monday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e; /* Dark background */
+            --container-bg: #3c424f; /* Slightly lighter container */
+            --text-color: #e8e6e3; /* Light text */
+            --question-text-color: #8ab4f8; /* Light blue for questions */
+            --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+            --border-color: #555; /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+             transition: background-color 0.3s, color 0.3s;
+        }
+         #theme-toggle-button:hover {
+             opacity: 0.8;
+         }
+
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+        
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+             font-weight: bold;
+             color: var(--question-text-color);
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+         .check-button:disabled {
+             background-color: var(--button-disabled-bg);
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+             font-weight: bold;
+             font-size: 1.1em;
+             display: block;
+             margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 2 Monday Practice Quiz</h1>
+
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        const quizData = [
+            // Questions from Cell Structure & Intracellular Organelles
+            {
+                learningObjective: "LO1 (Cell Structure): Describe the basic ultrastructure of a prototypical human cell, identify the chief organelles and major components of the cytoplasm...",
+                question: "A 4-year-old boy is diagnosed with I-cell disease (mucolipidosis II). This condition is caused by a failure to add a mannose-6-phosphate marker to hydrolytic enzymes in the Golgi apparatus. As a result, these enzymes are incorrectly secreted from the cell instead of being delivered to their target organelle. Which organelle's function is most directly impaired in this patient?",
+                options: { A: "Peroxisome", B: "Lysosome", C: "Mitochondrion", D: "Smooth Endoplasmic Reticulum", E: "Proteasome" },
+                correctAnswer: "B",
+                rationale: "I-cell disease is a lysosomal storage disease. The mannose-6-phosphate tag targets acid hydrolases to the lysosome. Without this tag, the enzymes are missorted, leaving the lysosomes non-functional. Peroxisomal and mitochondrial enzymes use different import pathways. SER is involved in lipid metabolism. Proteasomes degrade cytosolic proteins.",
+                source: "Source (Cell Structure, Page 9): 'LYSOSOMES are filled with hydrolytic enzymes... These enzymes are synthesized in RER and get processed and packaged in Golgi.' The Clinical Relevance box on the same page notes: 'Improper targeting of enzymes to the lysosomes or genetic defects in lysosomal enzymes can cause serious lysosomal diseases such as I-cell or Gaucher’s'."
+            },
+            {
+                learningObjective: "LO1 (Cell Structure): Describe the basic ultrastructure of a prototypical human cell...",
+                question: "A 58-year-old patient with a history of seizure disorder has been taking phenobarbital for many years. This drug is metabolized in the liver. Chronic administration leads to a notable proliferation of a specific organelle within hepatocytes, increasing the drug's rate of metabolism and leading to drug tolerance. Electron microscopy of this patient's liver cells would most likely show an abundance of which of the following?",
+                options: { A: "Mitochondria", B: "Golgi apparatus", C: "Rough Endoplasmic Reticulum", D: "Smooth Endoplasmic Reticulum", E: "Lysosomes" },
+                correctAnswer: "D",
+                rationale: "The Smooth Endoplasmic Reticulum (SER) is the primary site of detoxification. Chronic exposure to certain drugs induces proliferation (hypertrophy) of the SER in hepatocytes to increase metabolic capacity. The RER synthesizes secreted proteins, Golgi modifies them, Mitochondria produce ATP, and Lysosomes are for degradation.",
+                source: "Source (Cell Structure, Page 7): 'SER is chiefly involved with the metabolism of lipids, and the detoxification of drugs and poisons.'"
+            },
+            {
+                learningObjective: "LO1 (Cell Structure): Describe the basic ultrastructure of a prototypical human cell...",
+                question: "A 65-year-old man is diagnosed with multiple myeloma, a cancer characterized by the massive production of abnormal, misfolded immunoglobulins. The chemotherapy agent bortezomib is administered, which leads to apoptosis of the cancer cells by preventing the degradation of these accumulating toxic proteins. Bortezomib most likely inhibits the function of which of the following?",
+                options: { A: "Lysosomes", B: "Peroxisomes", C: "Proteasomes", D: "Nucleolus", E: "Golgi apparatus" },
+                correctAnswer: "C",
+                rationale: "Bortezomib is a proteasome inhibitor. Proteasomes are responsible for the quality control of endogenously synthesized proteins, degrading misfolded or damaged ones. In multiple myeloma, inhibiting their degradation with bortezomib is cytotoxic to the cancer cells due to the buildup of toxic misfolded proteins. Lysosomes primarily degrade extracellular material or organelles.",
+                source: "Source (Cell Structure, Page 11): The Clinical Relevance box states: 'Bortezomib, an inhibitor of proteasome function is used in the treatment of cancer.' The text explains proteasomes are involved in the 'quality control of endogenously synthesized proteins... and proteins that are folded incorrectly'."
+            },
+            {
+                learningObjective: "LO2 (Cell Structure): Explain membrane lipid asymmetry...",
+                question: "A researcher is studying apoptosis in a cell culture. They use fluorescently labeled annexin V, a protein that specifically binds to phosphatidylserine (PS), to identify cells in the early stages of programmed cell death. This detection method is effective because in early apoptosis, PS is found in which of the following locations?",
+                options: { A: "The inner leaflet of the mitochondrial membrane", B: "The outer leaflet of the plasma membrane", C: "The lumen of the endoplasmic reticulum", D: "The cytosol, unbound to any membrane", E: "The inner leaflet of the plasma membrane" },
+                correctAnswer: "B",
+                rationale: "A key feature of a healthy plasma membrane is the confinement of phosphatidylserine (PS) to the inner (cytosolic) leaflet. During early apoptosis, a scramblase moves PS to the outer leaflet, where it acts as an 'eat me' signal for phagocytes. Annexin V specifically binds to this exposed PS.",
+                source: "Source (Cell Structure, Page 15): 'During apoptosis (programmed cell death), the outer monolayer of the plasma membrane exhibits lipids that are typical of the inner monolayer.' and 'Surface display of PS provides several functions... including marking apoptotic cells for consumption by phagocytes'."
+            },
+            {
+                learningObjective: "LO2 (Cell Structure): Explain membrane lipid asymmetry...",
+                question: "The maintenance of the distinct phospholipid composition between the inner and outer leaflets of the plasma membrane is an energy-dependent process. An ATP-dependent transporter actively moves aminophospholipids, such as phosphatidylserine and phosphatidylethanolamine, from the extracellular leaflet to the cytosolic leaflet. This transporter is best classified as which of the following?",
+                options: { A: "A flippase", B: "A floppase", C: "A scramblase", D: "A symporter", E: "A channel protein" },
+                correctAnswer: "A",
+                rationale: "Flippases are ATP-dependent transporters that move specific aminophospholipids (PS, PE) from the outer leaflet to the inner leaflet, generating and maintaining lipid asymmetry. Floppases also use ATP but move lipids in the opposite direction. Scramblases are ATP-independent and move lipids bidirectionally.",
+                source: "Source (Cell Structure, Page 15): 'Flippases have substrate specificity to phosphatidyl serine and phosphatidyl choline and move these lipids to the inner monolayer (cytosolic).'"
+            },
+            {
+                learningObjective: "LO2 (Cell Structure): Explain membrane lipid asymmetry...",
+                question: "A patient with Scott syndrome, a rare bleeding disorder, is found to have platelets that fail to form a proper procoagulant surface upon activation. Normally, platelet activation causes a massive influx of Ca2+, which in turn activates a membrane protein that non-specifically and rapidly translocates phospholipids between the two leaflets, exposing phosphatidylserine. The defective protein in this patient is most likely which of the following?",
+                options: { A: "A flippase", B: "A P-glycoprotein floppase", C: "A scramblase", D: "A G-protein coupled receptor", E: "The Na+/K+-ATPase" },
+                correctAnswer: "C",
+                rationale: "Scramblases are enzymes that, when activated by high intracellular Ca2+, randomize phospholipids between the membrane leaflets. On platelets, this is crucial for exposing phosphatidylserine, which provides a negatively charged surface necessary for blood coagulation. Flippases and floppases maintain, not dissipate, asymmetry.",
+                source: "Source (Cell Structure, Page 16): 'This destruction of membrane asymmetry in cells is produced by the activation of a separate calcium-dependent scramblase... In the erythrocyte and platelet membranes these scramblases are activated after massive calcium entry and initiate blood coagulation.'"
+            },
+            {
+                learningObjective: "LO3 (Cell Structure): Classify molecules with restricted diffusion across cell membranes...",
+                question: "A pharmacologist is studying the transport of a new drug across a cell membrane. The transport rate increases with the extracellular concentration of the drug until it reaches a maximum velocity (Vmax). The process is highly specific for one stereoisomer of the drug and does not consume ATP. This drug most likely crosses the membrane via which mechanism?",
+                options: { A: "Simple diffusion", B: "Channel-mediated facilitated diffusion", C: "Carrier-mediated facilitated diffusion", D: "Primary active transport", E: "Secondary active transport" },
+                correctAnswer: "C",
+                rationale: "The described characteristics are saturation kinetics (Vmax) and specificity, without energy use. Simple diffusion lacks a protein and thus has no saturation or specificity. Active transport requires energy. Carrier-mediated facilitated diffusion uses a limited number of carrier proteins that bind the solute, explaining specificity and saturation, while moving it down its concentration gradient without ATP.",
+                source: "Source (Cell Structure, Page 18, 21): 'The term FACILITATED DIFFUSION... the transport process is highly specific to the solutes.' and 'when all of the proteins are bound to their ligands, they are saturated and the rate of transport is at its maximum.'"
+            },
+            {
+                learningObjective: "LO3 (Cell Structure): Classify molecules with restricted diffusion across cell membranes...",
+                question: "A patient with cystic fibrosis has a mutation in the CFTR gene, which codes for a protein that transports Cl- ions out of epithelial cells. This protein has a binding site for ATP, and the binding and hydrolysis of ATP are required to regulate the opening and closing of its pore. When open, it allows Cl- ions to move down their electrochemical gradient. The CFTR protein is best classified as which of the following?",
+                options: { A: "A voltage-gated channel", B: "A ligand-gated (ATP-gated) channel", C: "A primary active transporter", D: "A secondary active transporter", E: "A mechanosensitive channel" },
+                correctAnswer: "B",
+                rationale: "The CFTR protein functions as a channel, allowing ions to pass down their gradient. It is not an active transporter because it doesn't pump ions against their gradient. The opening and closing is regulated by the binding of a ligand (ATP), making it a ligand-gated channel.",
+                source: "Source (Cell Structure, Page 20): 'The flow of molecules through most channels in our body is regulated by various mechanisms in the sense that the channels open or close in response to a specific stimulus... such as... the binding of a ligand (ligand-gated ion channels, e.g., CFTR channel that is defective in cystic fibrosis is an ATP-gated anion channel).'"
+            },
+            {
+                learningObjective: "LO3 (Cell Structure): Classify molecules with restricted diffusion across cell membranes...",
+                question: "Which of the following molecules would be expected to have the lowest permeability (i.e., cross the slowest) through a pure, protein-free phospholipid bilayer?",
+                options: { A: "O2", B: "Ethanol", C: "H2O", D: "Na+", E: "Glucose" },
+                correctAnswer: "D",
+                rationale: "A pure lipid bilayer is most permeable to small, nonpolar molecules (O2). Small uncharged polar molecules (ethanol, H2O) have some permeability. Larger uncharged polar molecules (glucose) are less permeable. Charged ions (Na+) are virtually impermeable due to their hydration shell and charge, which are highly unfavorable in the hydrophobic core of the membrane.",
+                source: "Source (Cell Structure, Page 17): The diagram 'Permeability Property of “Naked” Lipid Bilayer' explicitly lists Ions (K+, Mg2+, Ca2+, Cl-, etc.) as 'Impermeable'."
+            },
+            {
+                learningObjective: "LO4 (Cell Structure): Explain the function of Na+/K+-ATPase...",
+                question: "A 68-year-old man with congestive heart failure is treated with digoxin, a cardiac glycoside that inhibits the Na+/K+-ATPase in cardiomyocytes. Inhibition of this pump leads directly to an increase in intracellular Na+ concentration. This change secondarily affects the Na+/Ca2+ exchanger, resulting in which of the following downstream effects that improves cardiac contractility?",
+                options: { A: "Decreased intracellular Ca2+ concentration", B: "Increased intracellular Ca2+ concentration", C: "Increased activity of the Na+/K+-ATPase", D: "Hyperpolarization of the cell membrane", E: "Decreased activity of the Na+/Ca2+ exchanger" },
+                correctAnswer: "B",
+                rationale: "The Na+/Ca2+ exchanger uses the Na+ gradient (high outside, low inside) to pump Ca2+ out. When digoxin inhibits the Na+/K+-ATPase, intracellular Na+ rises. This diminishes the Na+ gradient, reducing the driving force for the Na+/Ca2+ exchanger to extrude Ca2+. Consequently, intracellular Ca2+ concentration increases, enhancing cardiac muscle contractility.",
+                source: "Source (Cell Structure, Page 24): 'The Na+ gradient is utilized by the Na+/Ca2+ exchanger, an antiporter that exchanges intracellular Ca2+ for extracellular Na⁺ thus lowering the intracellular Ca2+...'"
+            },
+            {
+                learningObjective: "LO4 (Cell Structure): Explain the function of Na+/K+-ATPase...",
+                question: "The absorption of glucose from the intestinal lumen into epithelial cells is mediated by the sodium-glucose cotransporter (SGLT1). This protein moves glucose into the cell against its concentration gradient by coupling its transport to the favorable movement of Na+ into the cell down its gradient. Which of the following transporters is ultimately responsible for providing the energy for this secondary active transport process?",
+                options: { A: "Glucose transporter (GLUT2)", B: "Sodium-glucose cotransporter (SGLT1)", C: "Na+/K+-ATPase", D: "CFTR chloride channel", E: "A Ca2+ pump" },
+                correctAnswer: "C",
+                rationale: "Secondary active transport, like that of SGLT1, relies on an existing electrochemical gradient. The Na+/K+-ATPase is the primary active transporter that uses ATP to pump Na+ out of the cell, establishing and maintaining the low intracellular Na+ concentration. This steep Na+ gradient is the 'potential energy' that SGLT1 harnesses to drive glucose transport.",
+                source: "Source (Cell Structure, Pages 22-23): 'SECONDARY ACTIVE TRANSPORT (cotransport) processes, use electrochemical gradients generated by active transporters such as the Na+/K+-pump as an energy source... E.g., a secondary active transporter called sodium-dependent glucose transporter lets Na+ move down its gradient... but simultaneously brings a glucose molecule into the cell against its gradient...'"
+            },
+            {
+                learningObjective: "LO4 (Cell Structure): Explain the function of Na+/K+-ATPase...",
+                question: "A neuron maintains a resting membrane potential of approximately -70 mV. This potential is crucial for its ability to fire action potentials. Which of the following statements accurately describes a direct, electrogenic contribution of the Na+/K+-ATPase to this resting potential?",
+                options: { A: "It is an electroneutral pump, having no direct effect on membrane charge.", B: "It pumps three Na+ ions out of the cell for every two K+ ions it pumps in.", C: "It pumps an equal number of Na+ and K+ ions in opposite directions.", D: "It directly causes depolarization by pumping positive charge into the cell.", E: "Its primary role is to transport Ca2+ ions." },
+                correctAnswer: "B",
+                rationale: "The Na+/K+-ATPase has a fixed stoichiometry of transporting 3 Na+ ions out for every 2 K+ ions in per cycle. This results in a net export of one positive charge from the cell during each cycle. This unequal charge movement makes the pump electrogenic, contributing a small but direct hyperpolarizing current (making the inside more negative) to the resting membrane potential.",
+                source: "Source (Cell Structure, Page 22): 'Using ATP as the energy, this transporter transports 3 Na+ out of the cell while simultaneously transporting 2 K+ into the cell.' This stoichiometry is the basis of its electrogenic nature."
+            },
+
+            // New Questions from Amino Acids, Proteins, & Enzymes Handout
+            {
+                learningObjective: "LO1 (AAs, Proteins, Enzymes): Discuss amino acid classification based on physical and nutritional properties.",
+                question: "A 30-year-old male is brought to the emergency department following a severe crush injury sustained in a construction accident. He is in a hypercatabolic state due to extensive tissue damage and infection. His nutritional requirements are significantly increased for an amino acid that, while normally non-essential, cannot be synthesized in sufficient quantities by the body under these conditions. Which amino acid is most likely considered conditionally essential in this patient?",
+                options: { A: "Alanine", B: "Glycine", C: "Arginine", D: "Leucine", E: "Aspartate" },
+                correctAnswer: "C",
+                rationale: "Arginine is considered a conditionally essential amino acid. Under normal physiological conditions, the body can synthesize it. However, during periods of severe stress, such as major injury or infection, the body's demand for arginine can exceed its synthetic capacity, making dietary intake essential. Leucine is always essential. Alanine, Glycine, and Aspartate are non-essential.",
+                source: "Source (AAs, Proteins, Enzymes, Page 1): 'Please note that, though arginine can be synthesized in the human body, it is considered as a conditionally essential amino acid because there are situations where the demand for arginine may exceed the body's capacity to produce it. These situations can include: Stressful conditions: Such as injury, infection, or severe illness, which can increase the body's need for arginine.'"
+            },
+            {
+                learningObjective: "LO1 (AAs, Proteins, Enzymes): Discuss amino acid classification based on physical and nutritional properties.",
+                question: "A medical student is learning about the metabolic fates of amino acids. She needs to identify an amino acid that is exclusively ketogenic, meaning its carbon skeleton is degraded to acetyl-CoA or acetoacetyl-CoA and can contribute to the formation of ketone bodies but not glucose. Which of the following amino acids fits this description?",
+                options: { A: "Valine", B: "Phenylalanine", C: "Alanine", D: "Lysine", E: "Threonine" },
+                correctAnswer: "D",
+                rationale: "Amino acids are classified as glucogenic, ketogenic, or both. Leucine and Lysine are the only two amino acids that are exclusively ketogenic. Phenylalanine, Isoleucine, Tryptophan, and Threonine are both ketogenic and glucogenic. Valine and Alanine are exclusively glucogenic.",
+                source: "Source (AAs, Proteins, Enzymes, Page 1): The 'CLASSIFICATION OF AMINO ACIDS' chart clearly places Leucine and Lysine in the 'Ketogenic (2 AAs)' column."
+            },
+            {
+                learningObjective: "LO1 (AAs, Proteins, Enzymes): Discuss amino acid classification based on physical and nutritional properties.",
+                question: "A patient with a rare genetic disorder is unable to synthesize histidine. A dietary plan is being created to ensure adequate intake of all essential amino acids. Which of the following amino acids must also be included in the diet along with histidine?",
+                options: { A: "Proline", B: "Tyrosine", C: "Cysteine", D: "Glutamine", E: "Threonine" },
+                correctAnswer: "E",
+                rationale: "Essential amino acids cannot be synthesized de novo by the body and must be obtained from the diet. The mnemonic PVT TIM HALL helps to remember them: Phenylalanine, Valine, Threonine, Tryptophan, Isoleucine, Methionine, Histidine, Arginine (conditionally), Leucine, Lysine. Of the options provided, only Threonine is an essential amino acid. Proline, Tyrosine, Cysteine, and Glutamine are non-essential.",
+                source: "Source (AAs, Proteins, Enzymes, Page 1): 'A memory aid to remember the essential amino acids is PVT TIM HALL.' The chart lists Threonine under the 'Essential' row."
+            },
+            {
+                learningObjective: "LO2 (AAs, Proteins, Enzymes): Explain the role of amino acid R groups in protein folding... and consequences of protein misfolding.",
+                question: "An 8-year-old child of African descent presents with painful swelling of the hands and feet. Lab studies reveal anemia and the presence of abnormally shaped red blood cells. The underlying genetic defect is a single point mutation in the beta-globin gene, resulting in the substitution of one amino acid for another at position 6. This change causes the hemoglobin molecules to aggregate under low oxygen conditions. This pathophysiology is best explained by the substitution of a hydrophilic amino acid with which of the following?",
+                options: { A: "A hydrophobic amino acid", B: "An acidic amino acid", C: "A basic amino acid", D: "Another hydrophilic amino acid", E: "Proline" },
+                correctAnswer: "A",
+                rationale: "This clinical picture describes sickle cell anemia. The mutation replaces the negatively charged (hydrophilic) glutamic acid with the nonpolar (hydrophobic) valine. This substitution creates a 'hydrophobic patch' on the surface of the deoxyhemoglobin molecule, causing it to polymerize and form insoluble aggregates that deform the red blood cell.",
+                source: "Source (AAs, Proteins, Enzymes, Page 3): 'A best example of this sickle cell anemia in which a mutation replaces a glutamic acid (a hydrophilic acidic amino acid) in position 6 of the beta-globin gene in hemoglobin with valine (a [hydrophobic] branched-chain amino acid) causing the hemoglobin molecules to aggregate.'"
+            },
+            {
+                learningObjective: "LO2 (AAs, Proteins, Enzymes): Explain the role of amino acid R groups in protein folding... and consequences of protein misfolding.",
+                question: "A 65-year-old man presents with rapidly progressive dementia and myoclonus. The disease is found to be caused by an infectious protein agent that induces misfolding of a normal host protein. Pathological analysis of brain tissue reveals that the conversion of the normal cellular protein (PrPC) to the infectious form (PrPSc) is characterized by a significant change in which of the following structural elements?",
+                options: { A: "A decrease in β-sheets and an increase in α-helices", B: "An increase in β-sheets and a decrease in α-helices", C: "The formation of new disulfide bonds", D: "The cleavage of the primary amino acid sequence", E: "The addition of carbohydrate chains" },
+                correctAnswer: "B",
+                rationale: "Prion diseases, such as Creutzfeldt-Jakob Disease (CJD), are caused by the conversion of the normal PrPC protein, which is rich in α-helices, into the pathological PrPSc form. This conformational change involves a significant increase in the proportion of β-sheet structure. This altered secondary structure makes the protein prone to aggregation and resistant to proteolysis.",
+                source: "Source (AAs, Proteins, Enzymes, Page 4): 'The normal, non-infectious PrPC has a high α-helical content but little β-sheet. It has been observed that several α-helices in PrPC are replaced by β-sheets converting it to the infectious, neurotoxic form (PrPSc).'"
+            },
+            {
+                learningObjective: "LO2 (AAs, Proteins, Enzymes): Explain the role of amino acid R groups in protein folding... and consequences of protein misfolding.",
+                question: "A 55-year-old patient with poorly controlled type 2 diabetes mellitus has an elevated HbA1c level of 9.5%. This measurement reflects the average blood glucose over the past 2-3 months and is a key indicator of long-term glycemic control. The formation of HbA1c is a result of which of the following processes?",
+                options: { A: "Enzymatic phosphorylation", B: "Non-enzymatic glycation", C: "Oxidation of cysteine residues", D: "Proteolytic cleavage by chaperones", E: "Allosteric binding of glucose" },
+                correctAnswer: "B",
+                rationale: "HbA1c is formed through the non-enzymatic, covalent attachment of glucose to the N-terminal amino group of the beta-chain of hemoglobin. This process, known as glycation, is distinct from enzymatic glycosylation. The rate of glycation is directly proportional to the concentration of glucose in the blood, which is why it serves as an excellent marker for long-term diabetic control.",
+                source: "Source (AAs, Proteins, Enzymes, Page 3): 'Nonenzymatic glycation... is a process by which glucose is chemically bound to amino groups of proteins but without the help of enzymes... The most abundant minor hemoglobin component in human red cells is hemoglobin A1c (HbA1c) in which glucose is attached to the N-terminal amino group of the beta chain.'"
+            },
+            {
+                learningObjective: "LO3 (AAs, Proteins, Enzymes): Describe Michaelis Menten’s equation; List the common types of enzymatic inhibitors...",
+                question: "A patient is brought to the emergency department after ingesting antifreeze (ethylene glycol). The physician administers fomepizole, which has a much higher affinity for the enzyme alcohol dehydrogenase (ADH) than ethylene glycol does. By binding to the active site of ADH, fomepizole prevents the metabolism of ethylene glycol into its toxic metabolites. What effect will fomepizole have on the kinetics of ADH with respect to ethylene glycol?",
+                options: { A: "Decreased Vmax, unchanged Km", B: "Increased Vmax, increased Km", C: "Unchanged Vmax, increased apparent Km", D: "Decreased Vmax, decreased Km", E: "Unchanged Vmax, decreased apparent Km" },
+                correctAnswer: "C",
+                rationale: "Fomepizole is a competitive inhibitor of alcohol dehydrogenase. Competitive inhibitors bind to the active site of the enzyme, competing with the substrate. This type of inhibition increases the apparent Km (more substrate is needed to reach half Vmax) but does not change the Vmax, as the inhibition can be overcome by sufficiently high substrate concentrations.",
+                source: "Source (AAs, Proteins, Enzymes, Page 8): For competitive inhibition, the table and graph show 'Vmax unchanged' and 'Km,app increased'. The text on page 9 confirms this mechanism for ethylene glycol poisoning: 'Ethanol, having higher affinity for ADH, competes for the active site on ADH and thus prevents the metabolism of ethylene glycol...'"
+            },
+            {
+                learningObjective: "LO3 (AAs, Proteins, Enzymes): Describe Michaelis Menten’s equation; List the common types of enzymatic inhibitors...",
+                question: "A researcher is studying an enzyme in the presence of an irreversible inhibitor that forms a covalent bond with a residue at the active site. How would the addition of this inhibitor affect the kinetic parameters of the enzyme?",
+                options: { A: "It would increase the apparent Km but not affect Vmax.", B: "It would decrease Vmax but not affect the apparent Km.", C: "It would decrease both Vmax and the apparent Km.", D: "It would increase both Vmax and the apparent Km.", E: "It would have no effect on either Vmax or Km." },
+                correctAnswer: "B",
+                rationale: "An irreversible inhibitor effectively removes a certain amount of functional enzyme from the solution by permanently inactivating it. This reduces the total concentration of active enzyme, which directly leads to a decrease in Vmax. However, the remaining, uninhibited enzyme molecules are kinetically normal and have the same affinity for the substrate, so the Km remains unchanged.",
+                source: "Source (AAs, Proteins, Enzymes, Page 7): 'Irreversible inhibitors decrease Vmax but leave the apparent Km unchanged.' The accompanying Lineweaver-Burk plot also illustrates this, showing a change in the y-intercept (1/Vmax) but not the x-intercept (-1/Km)."
+            },
+            {
+                learningObjective: "LO3 (AAs, Proteins, Enzymes): Describe Michaelis Menten’s equation; List the common types of enzymatic inhibitors...",
+                question: "A patient with a bacterial infection is treated with a sulfonamide drug. This class of antibiotics is effective because it is structurally similar to para-aminobenzoic acid (PABA), a substrate required by bacteria for the synthesis of folic acid. The sulfonamide binds to the enzyme dihydropteroate synthase, preventing PABA from binding. This mechanism is an example of which of the following?",
+                options: { A: "Competitive inhibition", B: "Non-competitive inhibition", C: "Irreversible inhibition", D: "Suicide inhibition", E: "Allosteric activation" },
+                correctAnswer: "A",
+                rationale: "Sulfonamide drugs are classic examples of competitive inhibitors. They are structural analogs of the natural substrate (PABA) and compete for the same active site on the enzyme. By binding to the active site, they block the synthesis of folic acid, which is essential for bacterial survival. Humans are unaffected because they do not synthesize folic acid and must obtain it from their diet.",
+                source: "Source (AAs, Proteins, Enzymes, Page 9): 'Sulfa drugs are structurally similar to PABA and are competitive inhibitors of the enzyme that incorporates PABA into the folic acid.'"
+            },
+            {
+                learningObjective: "LO4 (AAs, Proteins, Enzymes): Explain ways in which enzyme activity is regulated...",
+                question: "In the biosynthesis of pyrimidine nucleotides, the final product of the pathway, CTP, binds to the first enzyme, aspartate transcarbamoylase, at a site distinct from the active site, reducing the enzyme's activity. This is a crucial mechanism for preventing the overproduction of pyrimidines. This form of regulation is best described as which of the following?",
+                options: { A: "Competitive inhibition", B: "Feedforward activation", C: "Feedback inhibition", D: "Suicide inhibition", E: "Covalent modification" },
+                correctAnswer: "C",
+                rationale: "This is a classic example of allosteric feedback inhibition. The end product (CTP) of a metabolic pathway binds to an allosteric site on an early enzyme in the same pathway (aspartate transcarbamoylase), inhibiting its activity. This efficiently regulates the flow through the pathway, conserving energy and resources when the final product is abundant.",
+                source: "Source (AAs, Proteins, Enzymes, Page 10): 'In feedback inhibition, the end product produced in a pathway inhibits the first enzyme of the pathway.' Page 11 further explains: 'CTP is one of the end products of the biosynthetic pathway. Thus, this enzyme is allosterically feedback inhibited by CTP.'"
+            },
+            {
+                learningObjective: "LO4 (AAs, Proteins, Enzymes): Explain ways in which enzyme activity is regulated...",
+                question: "An allosteric enzyme exhibits cooperative binding of its substrate. When plotting reaction velocity (v₀) against substrate concentration [S], what characteristic shape will the resulting curve have?",
+                options: { A: "A hyperbolic curve", B: "A linear curve with a positive slope", C: "A sigmoidal curve", D: "A linear curve with a negative slope", E: "A parabolic curve" },
+                correctAnswer: "C",
+                rationale: "Unlike enzymes that follow Michaelis-Menten kinetics and produce a hyperbolic curve, allosteric enzymes typically have multiple subunits and exhibit cooperativity. The binding of a substrate molecule to one active site increases the affinity of the other active sites for the substrate. This cooperative binding results in a characteristic S-shaped, or sigmoidal, curve when plotting velocity versus substrate concentration.",
+                source: "Source (AAs, Proteins, Enzymes, Page 11): 'On a velocity vs. [substrate] plot, allosteric enzymes will give a sigmoidal curve rather than hyperbolic; the sigmoidal shape is indicative of allosteric enzymes.'"
+            },
+            {
+                learningObjective: "LO4 (AAs, Proteins, Enzymes): Explain ways in which enzyme activity is regulated...",
+                question: "In a hepatocyte, high levels of AMP signal a low energy state. AMP binds to phosphofructokinase-1 (PFK1), increasing its activity to promote glycolysis. Simultaneously, AMP binds to fructose 1,6-bisphosphatase, inhibiting its activity to shut down gluconeogenesis. The binding of AMP to these enzymes occurs at a site other than the substrate-binding site. This type of regulation is best described as:",
+                options: { A: "Competitive inhibition and activation", B: "Covalent modification", C: "Allosteric regulation", D: "Limited proteolysis", E: "Suicide substrate inhibition" },
+                correctAnswer: "C",
+                rationale: "AMP is acting as an allosteric regulator. It binds to an allosteric site (a site distinct from the active site) on both enzymes. It functions as an allosteric activator for PFK1 and an allosteric inhibitor for fructose 1,6-bisphosphatase. This coordinated control prevents a futile cycle of simultaneous glucose synthesis and breakdown.",
+                source: "Source (AAs, Proteins, Enzymes, Page 9): 'High levels of AMP in hepatocytes signal that ATP levels are low and gluconeogenesis should be shut down while glycolysis is turned on' and 'High levels of AMP inhibit fructose 1,6-bisphosphatase... and activates phosphofructokinase-1 (PFK1)'. Page 10 defines this as 'allosteric regulation'."
+            },
+            {
+                learningObjective: "LO5 (AAs, Proteins, Enzymes): Discuss the clinical significance of isoenzymes...",
+                question: "A 55-year-old man presents to the emergency department with severe, crushing substernal chest pain. An ECG is suggestive of an acute myocardial infarction (MI). Blood tests are ordered to measure cardiac biomarkers. The lab reports elevated total creatine kinase (CK) and a CK-MB fraction that is 15% of the total CK. This finding is most indicative of damage to which tissue?",
+                options: { A: "Brain", B: "Skeletal muscle", C: "Liver", D: "Bone", E: "Cardiac muscle" },
+                correctAnswer: "E",
+                rationale: "Creatine kinase (CK) has three isoenzymes: MM, BB, and MB. While skeletal muscle is predominantly CK-MM and brain is CK-BB, cardiac muscle contains a significant percentage of the CK-MB isoenzyme (about 20%). A CK-MB level that is substantially elevated (typically >5-6% of the total CK) is highly specific for myocardial injury.",
+                source: "Source (AAs, Proteins, Enzymes, Page 12): 'cardiac cells have a higher percentage of the MB (20%) isoform compared to the other two tissues.' and 'a preferential increase in CK-MB levels in the first 24 hours after a suspected myocardial infarction indicates damage to cardiac muscle.'"
+            },
+            {
+                learningObjective: "LO5 (AAs, Proteins, Enzymes): Discuss the clinical significance of isoenzymes...",
+                question: "A 25-year-old marathon runner presents with severe muscle pain and weakness 24 hours after a race. His urine is dark brown. Laboratory results show a markedly elevated total creatine kinase (CK) level of 50,000 U/L (normal < 200 U/L). The CK-MB fraction is measured and found to be 0.8% of the total CK. What is the most likely source of the CK elevation?",
+                options: { A: "Acute myocardial infarction", B: "Acute stroke", C: "Severe liver damage", D: "Rhabdomyolysis (skeletal muscle breakdown)", E: "Pancreatitis" },
+                correctAnswer: "D",
+                rationale: "This is a classic presentation of rhabdomyolysis. The extremely high total CK is due to massive breakdown of skeletal muscle. Skeletal muscle is almost entirely composed of the CK-MM isoenzyme, with only about 1% CK-MB. Therefore, even with massive skeletal muscle injury, the CK-MB percentage remains low (< 5-6%). In an MI, the CK-MB percentage would be significantly higher.",
+                source: "Source (AAs, Proteins, Enzymes, Page 12): 'Skeletal muscle creatine kinase is predominantly MM (99%)' and the table shows skeletal muscle has only 1% CK-MB. The text also notes that with skeletal muscle injury 'a significant amount of CK-MB isoform also gets released... This would however always be ≤ 1% of the total CK.'"
+            },
+            {
+                learningObjective: "LO5 (AAs, Proteins, Enzymes): Discuss the clinical significance of isoenzymes...",
+                question: "Lactate dehydrogenase (LDH) and creatine kinase (CK) are examples of enzymes that exist as isoenzymes. Which of the following statements is a fundamental characteristic of isoenzymes?",
+                options: { A: "They are encoded by the same gene but are modified differently after translation.", B: "They catalyze the same reaction but are encoded by different genes.", C: "They always have identical Km and Vmax values.", D: "They are found only in a single tissue type within an organism.", E: "They have identical primary amino acid sequences." },
+                correctAnswer: "B",
+                rationale: "The defining characteristic of isoenzymes (or isozymes) is that they are different molecular forms of an enzyme that catalyze the same chemical reaction. These differences arise because they are encoded by different genes, which may have arisen through gene duplication and divergence over evolutionary time. This leads to differences in their amino acid sequence, structure, kinetic properties (Km, Vmax), and tissue distribution.",
+                source: "Source (AAs, Proteins, Enzymes, Page 11): 'Isoenzymes are different gene products (arising from different chromosomes). Thus, isozymes have different physico-chemical properties such as molecular mass, electrophoretic mobility, isoelectric pH, subunit composition, etc.'"
+            }
+        ];
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                 feedbackHTML = `<span class="feedback-status">Incorrect.</span> The correct answer is ${qData.correctAnswer}.`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+
+    </script>
+
+</body>
+</html>
